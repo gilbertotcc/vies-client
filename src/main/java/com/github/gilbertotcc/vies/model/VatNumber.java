@@ -1,5 +1,7 @@
 package com.github.gilbertotcc.vies.model;
 
+import com.github.gilbertotcc.vies.service.CheckVat;
+
 public class VatNumber {
 
     private String countryCode;
@@ -20,5 +22,12 @@ public class VatNumber {
 
     public String getNumber() {
         return number;
+    }
+
+    public CheckVat asCheckVat() {
+        final CheckVat checkVatRequest = new CheckVat();
+        checkVatRequest.setCountryCode(countryCode);
+        checkVatRequest.setVatNumber(number);
+        return checkVatRequest;
     }
 }
