@@ -181,4 +181,12 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-gilbertotcc-utils</id>
+            <name>gilbertotcc-utils</name>
+            <url>https://api.bintray.com/maven/gilbertotcc/utils/vies-client/;publish=1</url>
+        </repository>
+    </distributionManagement>
 </project>
