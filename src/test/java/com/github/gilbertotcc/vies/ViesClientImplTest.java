@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import com.github.gilbertotcc.vies.model.Country;
 import com.github.gilbertotcc.vies.model.VatNumber;
 import com.github.gilbertotcc.vies.model.VatNumberInformation;
 import com.github.gilbertotcc.vies.service.CheckVat;
@@ -38,7 +39,7 @@ public class ViesClientImplTest {
         when(checkVatService.getCheckVatPort()).thenReturn(checkVatPortType);
 
         final ViesClientImpl viesClient = new ViesClientImpl(checkVatService);
-        VatNumberInformation response = viesClient.checkVatNumber(VatNumber.of("IT", "vatNumber"));
+        VatNumberInformation response = viesClient.checkVatNumber(VatNumber.of(Country.ITALY, "vatNumber"));
 
         assertEquals(true, response.isValid());
         assertEquals("businessName", response.getBusinessInformation().getName());

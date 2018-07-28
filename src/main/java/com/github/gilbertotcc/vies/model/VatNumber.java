@@ -4,29 +4,21 @@ import com.github.gilbertotcc.vies.service.CheckVat;
 
 public class VatNumber {
 
-    private String countryCode;
+    private Country country;
     private String number;
 
-    private VatNumber(final String countryCode, final String number) {
-        this.countryCode = countryCode;
+    private VatNumber(final Country country, final String number) {
+        this.country = country;
         this.number = number;
     }
 
-    public static VatNumber of(final String countryCode, final String number) {
-        return new VatNumber(countryCode, number);
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public String getNumber() {
-        return number;
+    public static VatNumber of(final Country country, final String number) {
+        return new VatNumber(country, number);
     }
 
     public CheckVat asCheckVat() {
         final CheckVat checkVatRequest = new CheckVat();
-        checkVatRequest.setCountryCode(countryCode);
+        checkVatRequest.setCountryCode(country.getCode());
         checkVatRequest.setVatNumber(number);
         return checkVatRequest;
     }

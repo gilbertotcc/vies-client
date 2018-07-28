@@ -9,7 +9,7 @@ public class VatNumberTest {
 
     @Test
     public void vatNumberAsCheckVatShouldSuccess() {
-        VatNumber vatNumber = VatNumber.of("IT", "vatNumber");
+        VatNumber vatNumber = VatNumber.of(Country.ITALY, "vatNumber");
 
         CheckVat checkVat = vatNumber.asCheckVat();
 
