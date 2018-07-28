@@ -34,6 +34,6 @@ a VAT number is valid. If it is valid, service returns also business name and ad
 associated to the VAT number.
 
 ```java
-VatNumber vatNumber = VatNumber.of("IT", "0123456789");
+VatNumber vatNumber = VatNumber.of(Country.ITALY, "0123456789");
 VatNumberInformation res = ViesClient.create().checkVatNumber(vatNumber);
 ```
