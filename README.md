@@ -24,7 +24,6 @@ Add the Bintray repository and the client dependency in the POM file.
         <groupId>com.github.gilbertotcc.vies</groupId>
         <artifactId>vies-client</artifactId>
         <version>1.0.0</version>
-        <type>pom</type>
     </dependency>
 </dependencies>
 ```
