@@ -24,6 +24,20 @@ public class VatNumberInformationTest {
     }
 
     @Test
+    public void vatNumberInformationOfValidCheckVatResponseWithLineFeedsShouldSuccess() {
+        final ObjectFactory objectFactory = new ObjectFactory();
+        final CheckVatResponse checkVatResponse = new CheckVatResponse();
+        checkVatResponse.setName(objectFactory.createCheckVatResponseName("businessName"));
+        checkVatResponse.setAddress(objectFactory.createCheckVatResponseAddress("address \ncity \n"));
+        checkVatResponse.setValid(true);
+
+        final VatNumberInformation vatNumberInformation = VatNumberInformation.of(checkVatResponse);
+        assertEquals(true, vatNumberInformation.isValid());
+        assertEquals("businessName", vatNumberInformation.getBusinessInformation().getName());
+        assertEquals("address city", vatNumberInformation.getBusinessInformation().getAddress());
+    }
+
+    @Test
     public void vatNumberInformationOfInvalidCheckVatResponseShouldSuccess() {
         final ObjectFactory objectFactory = new ObjectFactory();
         final CheckVatResponse checkVatResponse = new CheckVatResponse();

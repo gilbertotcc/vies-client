@@ -3,6 +3,7 @@ package com.github.gilbertotcc.vies.model;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.xml.bind.JAXBElement;
 
@@ -64,10 +65,16 @@ public class VatNumberInformation {
 
     private static Function<CheckVatResponse, BusinessInformation> createBusinessInformation() {
         return checkVatResponse -> {
-            String businessName = Optional.ofNullable(checkVatResponse.getName()).map(JAXBElement::getValue).orElse(null);
-            String businessAddress = Optional.ofNullable(checkVatResponse.getAddress()).map(JAXBElement::getValue).orElse(null);
+            String businessName = contentOf(checkVatResponse::getName).orElse(null);
+            String businessAddress = contentOf(checkVatResponse::getAddress)
+                    .map(address -> address.replace("\n", " ").replaceAll("\\s{2,}", " ").trim())
+                    .orElse(null);
             return new BusinessInformation(businessName, businessAddress);
         };
+    }
+
+    private static <T> Optional<T> contentOf(Supplier<JAXBElement<T>> jaxbElementSupplier) {
+        return Optional.ofNullable(jaxbElementSupplier.get()).map(JAXBElement::getValue);
     }
 
     private static Predicate<CheckVatResponse> businessInformationIsNotEmpty() {
