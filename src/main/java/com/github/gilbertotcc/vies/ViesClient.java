@@ -5,7 +5,7 @@ import com.github.gilbertotcc.vies.model.VatNumber;
 
 public interface ViesClient {
 
-    VatNumberInformation checkVatNumber(final VatNumber vatNumber);
+    VatNumberInformation checkVatNumber(final VatNumber vatNumber) throws ViesServiceException;
 
     static ViesClient create() {
         return new ViesClientImpl();

@@ -23,6 +23,14 @@ public class VatNumber {
         return checkVatRequest;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
     @Override
     public String toString() {
         return String.format("(%s) %s", country.getCode(), number);

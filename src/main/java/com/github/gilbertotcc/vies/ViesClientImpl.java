@@ -19,9 +19,13 @@ public class ViesClientImpl implements ViesClient {
     }
 
     @Override
-    public VatNumberInformation checkVatNumber(final VatNumber vatNumber) {
+    public VatNumberInformation checkVatNumber(final VatNumber vatNumber) throws ViesServiceException {
         final CheckVat checkVatRequest = vatNumber.asCheckVat();
-        final CheckVatResponse checkVatResponse = checkVatService.getCheckVatPort().checkVat(checkVatRequest);
-        return VatNumberInformation.of(checkVatResponse);
+        try {
+            final CheckVatResponse checkVatResponse = checkVatService.getCheckVatPort().checkVat(checkVatRequest);
+            return VatNumberInformation.of(checkVatResponse);
+        } catch (Exception e) {
+            throw new ViesServiceException(String.format("Error occured while checking VAT number %s: %s", vatNumber, e.getMessage()), e);
+        }
     }
 }
