@@ -22,4 +22,9 @@ public class VatNumber {
         checkVatRequest.setVatNumber(number);
         return checkVatRequest;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s) %s", country.getCode(), number);
+    }
 }

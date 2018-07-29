@@ -1,10 +1,14 @@
 package com.github.gilbertotcc.vies.model;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.xml.bind.JAXBElement;
 
 import com.github.gilbertotcc.vies.service.CheckVatResponse;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class VatNumberInformation {
 
@@ -27,6 +31,8 @@ public class VatNumberInformation {
         }
     }
 
+    private static final VatNumberInformation INVALID_VAT_NUMBER_INFORMATION = new VatNumberInformation(false, null);
+
     private boolean valid;
     private BusinessInformation businessInformation;
 
@@ -36,12 +42,14 @@ public class VatNumberInformation {
     }
 
     public static VatNumberInformation of(CheckVatResponse checkVatResponse) {
-        if (!checkVatResponse.isValid()) return new VatNumberInformation(false, null);
+        if (!checkVatResponse.isValid()) {
+            return INVALID_VAT_NUMBER_INFORMATION;
+        }
 
-        final String businessName = Optional.ofNullable(checkVatResponse.getName()).map(JAXBElement::getValue).orElse(null);
-        final String businessAddress = Optional.ofNullable(checkVatResponse.getAddress()).map(JAXBElement::getValue).orElse(null);
-        final BusinessInformation businessInformation = businessName != null || businessAddress != null ?
-                new BusinessInformation(businessName, businessAddress) : null;
+        final BusinessInformation businessInformation = Optional.of(checkVatResponse)
+                .filter(businessInformationIsNotEmpty())
+                .map(createBusinessInformation())
+                .orElse(null);
 
         return new VatNumberInformation(checkVatResponse.isValid(), businessInformation);
     }
@@ -52,5 +60,22 @@ public class VatNumberInformation {
 
     public BusinessInformation getBusinessInformation() {
         return businessInformation;
+    }
+
+    private static Function<CheckVatResponse, BusinessInformation> createBusinessInformation() {
+        return checkVatResponse -> {
+            String businessName = Optional.ofNullable(checkVatResponse.getName()).map(JAXBElement::getValue).orElse(null);
+            String businessAddress = Optional.ofNullable(checkVatResponse.getAddress()).map(JAXBElement::getValue).orElse(null);
+            return new BusinessInformation(businessName, businessAddress);
+        };
+    }
+
+    private static Predicate<CheckVatResponse> businessInformationIsNotEmpty() {
+        return checkVatResponse -> checkVatResponse.getName() != null || checkVatResponse.getAddress() != null;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.JSON_STYLE, false);
     }
 }

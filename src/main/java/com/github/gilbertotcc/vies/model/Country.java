@@ -42,7 +42,7 @@ public enum Country {
     }
 
     public static Country byCode(String countryCode) {
-        return Stream.of(values()).filter(country -> country.code.equals(countryCode)).findFirst()
+        return Stream.of(values()).filter(country -> country.code.equalsIgnoreCase(countryCode)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Invalid country code '%s'", countryCode)));
     }
 }

@@ -16,4 +16,10 @@ public class VatNumberTest {
         assertEquals("IT", checkVat.getCountryCode());
         assertEquals("vatNumber", checkVat.getVatNumber());
     }
+
+    @Test
+    public void vatNumberToStringShouldReturnRightString() {
+        VatNumber vatNumber = VatNumber.of(Country.ITALY, "vatNumber");
+        assertEquals("(IT) vatNumber", vatNumber.toString());
+    }
 }
