@@ -7,40 +7,29 @@ import java.util.function.Supplier;
 
 import javax.xml.bind.JAXBElement;
 
-import com.github.gilbertotcc.vies.service.CheckVatResponse;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVatResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@AllArgsConstructor
+@Getter
 public class VatNumberInformation {
 
+    @AllArgsConstructor
+    @Getter
     public static class BusinessInformation {
 
         private String name;
         private String address;
 
-        private BusinessInformation(final String name, final String address) {
-            this.name = name;
-            this.address = address;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAddress() {
-            return address;
-        }
     }
 
     private static final VatNumberInformation INVALID_VAT_NUMBER_INFORMATION = new VatNumberInformation(false, null);
 
     private boolean valid;
     private BusinessInformation businessInformation;
-
-    private VatNumberInformation(final boolean valid, final BusinessInformation businessInformation) {
-        this.valid = valid;
-        this.businessInformation = businessInformation;
-    }
 
     public static VatNumberInformation of(CheckVatResponse checkVatResponse) {
         if (!checkVatResponse.isValid()) {

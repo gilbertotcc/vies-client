@@ -1,18 +1,19 @@
 package com.github.gilbertotcc.vies;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import com.github.gilbertotcc.vies.model.Country;
 import com.github.gilbertotcc.vies.model.VatNumber;
 import com.github.gilbertotcc.vies.model.VatNumberInformation;
-import com.github.gilbertotcc.vies.service.CheckVat;
-import com.github.gilbertotcc.vies.service.CheckVatPortType;
-import com.github.gilbertotcc.vies.service.CheckVatResponse;
-import com.github.gilbertotcc.vies.service.CheckVatService;
-import com.github.gilbertotcc.vies.service.ObjectFactory;
+
+import eu.europa.ec.taxud.vies.services.checkvat.CheckVatPortType;
+import eu.europa.ec.taxud.vies.services.checkvat.CheckVatService;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVat;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVatResponse;
+import eu.europa.ec.taxud.vies.services.checkvat.types.ObjectFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -41,13 +42,13 @@ public class ViesClientImplTest {
         final ViesClientImpl viesClient = new ViesClientImpl(checkVatService);
         VatNumberInformation response = viesClient.checkVatNumber(VatNumber.of(Country.ITALY, "vatNumber"));
 
-        assertEquals(true, response.isValid());
+        assertTrue(response.isValid());
         assertEquals("businessName", response.getBusinessInformation().getName());
         assertEquals("businessAddress", response.getBusinessInformation().getAddress());
     }
 
     @Test
     public void createViesClientImplWithoutParametersShouldSuccess() {
-        assertNotNull(new ViesClientImpl());
+        new ViesClientImpl();
     }
 }

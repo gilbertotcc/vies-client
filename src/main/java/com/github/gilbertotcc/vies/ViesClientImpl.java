@@ -2,17 +2,15 @@ package com.github.gilbertotcc.vies;
 
 import com.github.gilbertotcc.vies.model.VatNumberInformation;
 import com.github.gilbertotcc.vies.model.VatNumber;
-import com.github.gilbertotcc.vies.service.CheckVat;
-import com.github.gilbertotcc.vies.service.CheckVatResponse;
-import com.github.gilbertotcc.vies.service.CheckVatService;
+import eu.europa.ec.taxud.vies.services.checkvat.CheckVatService;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVat;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVatResponse;
+import lombok.AllArgsConstructor;
 
-public class ViesClientImpl implements ViesClient {
+@AllArgsConstructor
+class ViesClientImpl implements ViesClient {
 
-    private final CheckVatService checkVatService;
-
-    ViesClientImpl(final CheckVatService checkVatService) {
-        this.checkVatService = checkVatService;
-    }
+    private CheckVatService checkVatService;
 
     ViesClientImpl() {
         this(new CheckVatService());
@@ -25,7 +23,7 @@ public class ViesClientImpl implements ViesClient {
             final CheckVatResponse checkVatResponse = checkVatService.getCheckVatPort().checkVat(checkVatRequest);
             return VatNumberInformation.of(checkVatResponse);
         } catch (Exception e) {
-            throw new ViesServiceException(String.format("Error occured while checking VAT number %s: %s", vatNumber, e.getMessage()), e);
+            throw new ViesServiceException(String.format("Error occurred while checking VAT number %s: %s", vatNumber, e.getMessage()), e);
         }
     }
 }

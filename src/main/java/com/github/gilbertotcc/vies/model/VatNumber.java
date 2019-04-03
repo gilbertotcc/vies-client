@@ -1,34 +1,23 @@
 package com.github.gilbertotcc.vies.model;
 
-import com.github.gilbertotcc.vies.service.CheckVat;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Value;
 
+@Value
+@Getter
+@AllArgsConstructor(staticName = "of")
 public class VatNumber {
 
     private Country country;
     private String number;
-
-    private VatNumber(final Country country, final String number) {
-        this.country = country;
-        this.number = number;
-    }
-
-    public static VatNumber of(final Country country, final String number) {
-        return new VatNumber(country, number);
-    }
 
     public CheckVat asCheckVat() {
         final CheckVat checkVatRequest = new CheckVat();
         checkVatRequest.setCountryCode(country.getCode());
         checkVatRequest.setVatNumber(number);
         return checkVatRequest;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public String getNumber() {
-        return number;
     }
 
     @Override

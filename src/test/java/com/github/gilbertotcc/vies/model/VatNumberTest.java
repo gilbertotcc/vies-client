@@ -2,7 +2,7 @@ package com.github.gilbertotcc.vies.model;
 
 import static org.junit.Assert.assertEquals;
 
-import com.github.gilbertotcc.vies.service.CheckVat;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVat;
 import org.junit.Test;
 
 public class VatNumberTest {

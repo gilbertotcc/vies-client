@@ -1,10 +1,12 @@
 package com.github.gilbertotcc.vies.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import com.github.gilbertotcc.vies.service.CheckVatResponse;
-import com.github.gilbertotcc.vies.service.ObjectFactory;
+import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVatResponse;
+import eu.europa.ec.taxud.vies.services.checkvat.types.ObjectFactory;
 import org.junit.Test;
 
 public class VatNumberInformationTest {
@@ -18,7 +20,7 @@ public class VatNumberInformationTest {
         checkVatResponse.setValid(true);
 
         final VatNumberInformation vatNumberInformation = VatNumberInformation.of(checkVatResponse);
-        assertEquals(true, vatNumberInformation.isValid());
+        assertTrue(vatNumberInformation.isValid());
         assertEquals("businessName", vatNumberInformation.getBusinessInformation().getName());
         assertEquals("businessAddress", vatNumberInformation.getBusinessInformation().getAddress());
     }
@@ -32,7 +34,7 @@ public class VatNumberInformationTest {
         checkVatResponse.setValid(true);
 
         final VatNumberInformation vatNumberInformation = VatNumberInformation.of(checkVatResponse);
-        assertEquals(true, vatNumberInformation.isValid());
+        assertTrue(vatNumberInformation.isValid());
         assertEquals("businessName", vatNumberInformation.getBusinessInformation().getName());
         assertEquals("address city", vatNumberInformation.getBusinessInformation().getAddress());
     }
@@ -46,7 +48,7 @@ public class VatNumberInformationTest {
         checkVatResponse.setValid(false);
 
         final VatNumberInformation vatNumberInformation = VatNumberInformation.of(checkVatResponse);
-        assertEquals(false, vatNumberInformation.isValid());
+        assertFalse(vatNumberInformation.isValid());
         assertNull(vatNumberInformation.getBusinessInformation());
     }
 
@@ -59,7 +61,7 @@ public class VatNumberInformationTest {
         checkVatResponse.setValid(true);
 
         final VatNumberInformation vatNumberInformation = VatNumberInformation.of(checkVatResponse);
-        assertEquals(true, vatNumberInformation.isValid());
+        assertTrue(vatNumberInformation.isValid());
         assertEquals("businessName", vatNumberInformation.getBusinessInformation().getName());
         assertNull(vatNumberInformation.getBusinessInformation().getAddress());
     }
@@ -73,7 +75,7 @@ public class VatNumberInformationTest {
         checkVatResponse.setValid(true);
 
         final VatNumberInformation vatNumberInformation = VatNumberInformation.of(checkVatResponse);
-        assertEquals(true, vatNumberInformation.isValid());
+        assertTrue(vatNumberInformation.isValid());
         assertNull(vatNumberInformation.getBusinessInformation().getName());
         assertEquals("businessAddress", vatNumberInformation.getBusinessInformation().getAddress());
     }
