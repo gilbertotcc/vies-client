@@ -6,8 +6,8 @@ import org.junit.Test;
 
 public class ViesClientTest {
 
-    @Test
-    public void createViesClientShouldSuccess() {
-        assertNotNull(ViesClient.create());
-    }
+  @Test
+  public void createViesClientShouldSuccess() {
+    assertNotNull(ViesClient.create());
+  }
 }

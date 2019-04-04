@@ -1,0 +1,81 @@
+buildscript {
+  repositories {
+    jcenter()
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'no.nils:wsdl2java:0.10'
+  }
+}
+
+plugins {
+  id 'java'
+  id 'idea'
+  id 'jacoco'
+  id 'checkstyle'
+  id 'maven-publish'
+
+  id 'no.nils.wsdl2java' version '0.10'
+}
+
+wrapper {
+  gradleVersion = '5.1'
+}
+
+repositories {
+  mavenLocal()
+  maven {
+    url = 'http://repo.maven.apache.org/maven2'
+  }
+}
+
+dependencies {
+  // COMMON
+  compile 'org.apache.commons:commons-lang3:3.7'
+  annotationProcessor 'org.projectlombok:lombok:1.18.4'
+  compileOnly 'org.projectlombok:lombok:1.18.4'
+
+  // TESTING
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
+  testCompileOnly 'org.projectlombok:lombok:1.18.4'
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.mockito:mockito-all:1.10.19'
+}
+
+group = 'com.github.gilbertotcc.vies'
+version = '1.0-SNAPSHOT'
+description = 'vies-client'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from(components.java)
+    }
+  }
+}
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+wsdl2javaExt {
+  deleteGeneratedSourcesOnClean = true
+}
+wsdl2java {
+  generatedWsdlDir = file("src/main/generated/")  // target directory for generated source coude
+  wsdlDir = file("src/wsdl/") // define to support incremental build
+  wsdlsToGenerate = [
+    ['-xjc', '-b', 'src/wsdl/bindings.xml', 'http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl']
+  ]
+}
+sourceSets.main.java.srcDirs.addAll(file("src/main/generated/"))
+
+test.finalizedBy jacocoTestReport
+
+// CHECKSTYLE
+
+checkstyleMain.source = "src/main/java"
+checkstyleTest.source = "src/test/java"

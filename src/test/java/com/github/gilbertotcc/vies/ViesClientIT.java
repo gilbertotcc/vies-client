@@ -1,33 +1,54 @@
 package com.github.gilbertotcc.vies;
 
+import static com.github.gilbertotcc.vies.VatNumber.Country.ITALY;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.github.gilbertotcc.vies.model.Country;
-import com.github.gilbertotcc.vies.model.VatNumberInformation;
-import com.github.gilbertotcc.vies.model.VatNumber;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
+import com.github.gilbertotcc.vies.converter.CheckVatResponseToVatNumberInformationConverter;
+import com.github.gilbertotcc.vies.converter.VatNumberToCheckVatRequestConverter;
+import eu.europa.ec.taxud.vies.services.checkvat.CheckVatService;
 import org.junit.Test;
 
 public class ViesClientIT {
 
-    private static final String VALID_ITALIAN_VAT_NUMBER = System.getenv("VALID_ITALIAN_VAT_NUMBER");
+  private static final ViesClient TEST_VIES_CLIENT = new ViesClientImpl(
+    checkVatTestService(),
+    new VatNumberToCheckVatRequestConverter(),
+    new CheckVatResponseToVatNumberInformationConverter()
+  );
 
-    @Test
-    public void checkVatNumberShouldSuccess() {
-        VatNumberInformation res = ViesClient.create().checkVatNumber(VatNumber.of(Country.ITALY, VALID_ITALIAN_VAT_NUMBER));
-
-        assertTrue(res.isValid());
-        assertNotNull(res.getBusinessInformation().getName());
-        assertNotNull(res.getBusinessInformation().getAddress());
+  private static CheckVatService checkVatTestService() {
+    try {
+      return new CheckVatService(
+        new URL("http://ec.europa.eu/taxation_customs/vies/checkVatTestService.wsdl"),
+        new QName("urn:ec.europa.eu:taxud:vies:services:checkVat", "checkVatTestService")
+      );
+    } catch (MalformedURLException e) {
+      throw new RuntimeException("Cannot initialize test 'checkVatTestService'", e);
     }
+  }
 
-    @Test
-    public void checkInvalidVatNumberShouldSuccessWithNotValidVatNumber() {
-        VatNumberInformation res = ViesClient.create().checkVatNumber(VatNumber.of(Country.ITALY, "01234567890"));
+  @Test
+  public void checkVatNumberShouldSuccess() throws ViesServiceException {
+    VatNumberInformation res = TEST_VIES_CLIENT.checkVatNumber(VatNumber.vatNumber(ITALY, "100"));
 
-        assertFalse(res.isValid());
-        assertNull(res.getBusinessInformation());
-    }
+    assertTrue(res.isValid());
+    assertNotNull(res.getBusiness().getName());
+    assertNotNull(res.getBusiness().getAddress());
+  }
+
+  @Test
+  public void checkInvalidVatNumberShouldSuccessWithNotValidVatNumber() throws ViesServiceException {
+    VatNumberInformation res = TEST_VIES_CLIENT.checkVatNumber(VatNumber.vatNumber(ITALY, "200"));
+
+    assertFalse(res.isValid());
+    assertNull(res.getBusiness());
+  }
 }
