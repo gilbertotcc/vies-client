@@ -1,14 +1,13 @@
 package com.github.gilbertotcc.vies;
 
+import static com.github.gilbertotcc.vies.VatNumber.Country.ITALY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import com.github.gilbertotcc.vies.model.Country;
-import com.github.gilbertotcc.vies.model.VatNumber;
-import com.github.gilbertotcc.vies.model.VatNumberInformation;
-
+import com.github.gilbertotcc.vies.converter.CheckVatResponseToVatNumberInformationConverter;
+import com.github.gilbertotcc.vies.converter.VatNumberToCheckVatRequestConverter;
 import eu.europa.ec.taxud.vies.services.checkvat.CheckVatPortType;
 import eu.europa.ec.taxud.vies.services.checkvat.CheckVatService;
 import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVat;
@@ -22,33 +21,37 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ViesClientImplTest {
 
-    @Mock
-    private CheckVatService checkVatService;
+  @Mock
+  private CheckVatService checkVatService;
 
-    @Mock
-    private CheckVatPortType checkVatPortType;
+  @Mock
+  private CheckVatPortType checkVatPortType;
 
-    @Test
-    public void checkVatNumberShouldSuccess() {
-        final ObjectFactory objectFactory = new ObjectFactory();
-        final CheckVatResponse checkVatResponse = new CheckVatResponse();
-        checkVatResponse.setName(objectFactory.createCheckVatResponseName("businessName"));
-        checkVatResponse.setAddress(objectFactory.createCheckVatResponseAddress("businessAddress"));
-        checkVatResponse.setValid(true);
+  @Test
+  public void checkVatNumberShouldSuccess() throws ViesServiceException {
+    final ObjectFactory objectFactory = new ObjectFactory();
+    final CheckVatResponse checkVatResponse = new CheckVatResponse();
+    checkVatResponse.setName(objectFactory.createCheckVatResponseName("businessName"));
+    checkVatResponse.setAddress(objectFactory.createCheckVatResponseAddress("businessAddress"));
+    checkVatResponse.setValid(true);
 
-        when(checkVatPortType.checkVat(any(CheckVat.class))).thenReturn(checkVatResponse);
-        when(checkVatService.getCheckVatPort()).thenReturn(checkVatPortType);
+    when(checkVatPortType.checkVat(any(CheckVat.class))).thenReturn(checkVatResponse);
+    when(checkVatService.getCheckVatPort()).thenReturn(checkVatPortType);
 
-        final ViesClientImpl viesClient = new ViesClientImpl(checkVatService);
-        VatNumberInformation response = viesClient.checkVatNumber(VatNumber.of(Country.ITALY, "vatNumber"));
+    final ViesClientImpl viesClient = new ViesClientImpl(
+      checkVatService,
+      new VatNumberToCheckVatRequestConverter(),
+      new CheckVatResponseToVatNumberInformationConverter()
+    );
+    VatNumberInformation response = viesClient.checkVatNumber(VatNumber.vatNumber(ITALY, "vatNumber"));
 
-        assertTrue(response.isValid());
-        assertEquals("businessName", response.getBusinessInformation().getName());
-        assertEquals("businessAddress", response.getBusinessInformation().getAddress());
-    }
+    assertTrue(response.isValid());
+    assertEquals("businessName", response.getBusiness().getName());
+    assertEquals("businessAddress", response.getBusiness().getAddress());
+  }
 
-    @Test
-    public void createViesClientImplWithoutParametersShouldSuccess() {
-        new ViesClientImpl();
-    }
+  @Test
+  public void createViesClientImplWithoutParametersShouldSuccess() {
+    new ViesClientImpl();
+  }
 }
