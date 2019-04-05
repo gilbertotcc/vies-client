@@ -23,7 +23,6 @@ dependencies {
 Then, the client can be used as shown in the example below.
 
 ```java
-
 public static void main() throws ViesServiceException {
   VatNumberInformation vatNumberInformation = ViesClient.create()
     .checkVatNumber(VatNumber.vatNumber(Country.ITALY, "100"));

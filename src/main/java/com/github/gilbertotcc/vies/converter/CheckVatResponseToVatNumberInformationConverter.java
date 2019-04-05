@@ -1,14 +1,12 @@
 package com.github.gilbertotcc.vies.converter;
 
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import javax.xml.bind.JAXBElement;
 
 import com.github.gilbertotcc.vies.VatNumberInformation;
 import eu.europa.ec.taxud.vies.services.checkvat.types.CheckVatResponse;
+import io.vavr.control.Option;
 
 public class CheckVatResponseToVatNumberInformationConverter
   implements Converter<CheckVatResponse, VatNumberInformation> {
@@ -16,29 +14,27 @@ public class CheckVatResponseToVatNumberInformationConverter
   @Override
   public VatNumberInformation convert(final CheckVatResponse checkVatResponse) {
     return checkVatResponse.isValid()
-      ? new VatNumberInformation(
-      true, Optional.of(checkVatResponse)
-      .filter(businessInformationIsNotEmpty())
-      .map(createBusinessInformation())
-      .orElse(null))
+      ? new VatNumberInformation(true, createBusinessInformation().apply(checkVatResponse))
       : VatNumberInformation.NOT_VALID;
   }
 
   private static Function<CheckVatResponse, VatNumberInformation.Business> createBusinessInformation() {
-    return checkVatResponse -> {
-      String businessName = contentOf(checkVatResponse::getName).orElse(null);
-      String businessAddress = contentOf(checkVatResponse::getAddress)
-        .map(address -> address.replace("\n", " ").replaceAll("\\s{2,}", " ").trim())
-        .orElse(null);
-      return new VatNumberInformation.Business(businessName, businessAddress);
-    };
+    return checkVatResponse -> new VatNumberInformation.Business(
+      contentOf(checkVatResponse.getName())
+        .getOrNull(),
+      contentOf(checkVatResponse.getAddress())
+        .map(CheckVatResponseToVatNumberInformationConverter::reformatAddress)
+        .getOrNull()
+    );
   }
 
-  private static <T> Optional<T> contentOf(Supplier<JAXBElement<T>> jaxbElementSupplier) {
-    return Optional.ofNullable(jaxbElementSupplier.get()).map(JAXBElement::getValue);
+  private static <T> Option<T> contentOf(JAXBElement<T> jaxbElement) {
+    return Option.of(jaxbElement)
+      .filter(element -> !element.isNil())
+      .map(JAXBElement::getValue);
   }
 
-  private static Predicate<CheckVatResponse> businessInformationIsNotEmpty() {
-    return checkVatResponse -> checkVatResponse.getName() != null || checkVatResponse.getAddress() != null;
+  private static String reformatAddress(String address) {
+    return address.replace("\n", " ").replaceAll("\\s{2,}", " ").trim();
   }
 }
