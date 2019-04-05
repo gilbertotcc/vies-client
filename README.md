@@ -1,38 +1,36 @@
 # VIES client
 
-A Java client which uses [VIES (VAT Information Exchange System)](http://ec.europa.eu/taxation_customs/vies/)
-SOAP service to check if a European VAT number is valid and return, whether it is valid, the business
-information associated to it (_name_ and _address_).
+A Java client that uses the [VIES (VAT Information Exchange System)](http://ec.europa.eu/taxation_customs/vies/) SOAP
+service to check whether an European VAT number is valid or not. Whether the VAT number is valid, the service returns,
+if available, the business name and address.
 
-## Usage with Maven
+## Usage
 
-Add the Bintray repository and the client dependency in the POM file.
+If you are using Gradle, include repository and dependency on the VIES client in your `build.gradle` file.
 
-```xml
-<repositories>
-    <repository>
-        <id>bintray-gilbertotcc-utils</id>
-        <name>bintray</name>
-        <url>https://dl.bintray.com/gilbertotcc/utils</url>
-    </repository>
-</repositories>
+```groovy
+repositories {
+  maven {
+    url  "https://dl.bintray.com/gilbertotcc/utils" 
+  }
+}
 
-[...]
-
-<dependencies>
-    <dependency>
-        <groupId>com.github.gilbertotcc.vies</groupId>
-        <artifactId>vies-client</artifactId>
-        <version>1.0.1</version>
-    </dependency>
-</dependencies>
+dependencies {
+  compile "com.github.gilbertotcc.vies:vies-client:${version}"
+}
 ```
 
-Then, instantiate the client and call `ViesClient::checkVatNumber` method to verify if
-a VAT number is valid. If it is valid, service returns also business name and address
-associated to the VAT number.
+Then, the client can be used as shown in the example below.
 
 ```java
-VatNumber vatNumber = VatNumber.of(Country.ITALY, "0123456789");
-VatNumberInformation res = ViesClient.create().checkVatNumber(vatNumber);
+public static void main() throws ViesServiceException {
+  VatNumberInformation vatNumberInformation = ViesClient.create()
+    .checkVatNumber(VatNumber.vatNumber(Country.ITALY, "100"));
+
+  System.out.println(format("VAT number is %s. Business info: name=%s, address=%s",
+    vatNumberInformation.isValid() ? "valid" : "not valid",
+    vatNumberInformation.getBusiness().getName(),
+    vatNumberInformation.getBusiness().getAddress()
+  )); // Prints: VAT number is valid. Business info: name=John Doe, address=123 Main St, Anytown, UK
+}
 ```
