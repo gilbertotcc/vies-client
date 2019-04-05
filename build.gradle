@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
   // COMMON
-  compile 'org.apache.commons:commons-lang3:3.7'
+  compile 'io.vavr:vavr:0.10.0'
   annotationProcessor 'org.projectlombok:lombok:1.18.4'
   compileOnly 'org.projectlombok:lombok:1.18.4'
 

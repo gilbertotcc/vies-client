@@ -28,7 +28,7 @@ public class ViesClientImplTest {
   private CheckVatPortType checkVatPortType;
 
   @Test
-  public void checkVatNumberShouldSuccess() throws ViesServiceException {
+  public void checkVatNumberShouldSuccess() throws CheckVatNumberException {
     final ObjectFactory objectFactory = new ObjectFactory();
     final CheckVatResponse checkVatResponse = new CheckVatResponse();
     checkVatResponse.setName(objectFactory.createCheckVatResponseName("businessName"));
@@ -50,8 +50,4 @@ public class ViesClientImplTest {
     assertEquals("businessAddress", response.getBusiness().getAddress());
   }
 
-  @Test
-  public void createViesClientImplWithoutParametersShouldSuccess() {
-    new ViesClientImpl();
-  }
 }
