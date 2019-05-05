@@ -4,6 +4,8 @@ A Java client that uses the [VIES (VAT Information Exchange System)](http://ec.e
 service to check whether an European VAT number is valid or not. Whether the VAT number is valid, the service returns,
 if available, the business name and address.
 
+[![Coverage Status](https://coveralls.io/repos/github/gilbertotcc/vies-client/badge.svg?branch=develop)](https://coveralls.io/github/gilbertotcc/vies-client?branch=develop)
+
 ## Usage
 
 If you are using Gradle, include repository and dependency on the VIES client in your `build.gradle` file.

@@ -50,4 +50,16 @@ public class ViesClientImplTest {
     assertEquals("businessAddress", response.getBusiness().getAddress());
   }
 
+  @Test(expected = CheckVatNumberException.class)
+  public void checkVatNumberShouldThrowException() throws CheckVatNumberException {
+    when(checkVatPortType.checkVat(any(CheckVat.class))).thenThrow(new RuntimeException("Failure"));
+    when(checkVatService.getCheckVatPort()).thenReturn(checkVatPortType);
+    final ViesClient viesClient = new ViesClientImpl(
+      checkVatService,
+      new VatNumberToCheckVatRequestConverter(),
+      new CheckVatResponseToVatNumberInformationConverter()
+    );
+
+    viesClient.checkVatNumber(VatNumber.vatNumber(ITALY, "vatNumber"));
+  }
 }
