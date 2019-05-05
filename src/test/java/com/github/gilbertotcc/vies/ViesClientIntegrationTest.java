@@ -17,7 +17,7 @@ import io.vavr.control.Try;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ViesClientIT {
+public class ViesClientIntegrationTest {
 
   private static final VatNumber VALID_TEST_VAT_NUMBER = VatNumber.vatNumber(ITALY, "100");
   private static final VatNumber INVALID_TEST_VAT_NUMBER = VatNumber.vatNumber(ITALY, "200");
