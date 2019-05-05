@@ -17,9 +17,10 @@ plugins {
   id 'checkstyle'
   id 'maven-publish'
   id 'com.jfrog.bintray' version '1.8.4'
-  id 'no.nils.wsdl2java' version '0.10'
+  id 'com.ololo.wsdl2java' version '0.26'
   id 'com.adarshr.test-logger' version '1.6.0'
   id 'net.researchgate.release' version '2.8.0'
+  id 'com.github.kt3k.coveralls' version '2.8.2'
 }
 
 wrapper {
@@ -36,8 +37,22 @@ repositories {
 dependencies {
   // COMMON
   compile 'io.vavr:vavr:0.10.0'
+  compile 'com.sun.xml.ws:rt:2.3.2'
+  compile 'com.sun.org.apache.xml.internal:resolver:20050927'
   annotationProcessor 'org.projectlombok:lombok:1.18.4'
   compileOnly 'org.projectlombok:lombok:1.18.4'
+
+  wsdl2java 'com.sun.xml.bind:jaxb-xjc:2.3.0.1'
+  wsdl2java 'javax.xml.bind:jaxb-api:2.3.1'
+  wsdl2java 'javax.xml.ws:jaxws-api:2.3.1'
+  wsdl2java 'org.apache.cxf:cxf-rt-wsdl:3.2.7'
+  wsdl2java 'javax.jws:javax.jws-api:1.1'
+
+  implementation 'com.sun.xml.bind:jaxb-xjc:2.3.0.1'
+  implementation 'javax.xml.bind:jaxb-api:2.3.1'
+  implementation 'javax.xml.ws:jaxws-api:2.3.1'
+  implementation 'org.apache.cxf:cxf-rt-wsdl:3.2.7'
+  implementation 'javax.jws:javax.jws-api:1.1'
 
   // TESTING
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
@@ -62,11 +77,24 @@ jacocoTestReport {
   dependsOn jacocoMergeTestReport
   executionData jacocoMergedReport
   reports {
-    xml.enabled false
+    xml.enabled true
     csv.enabled false
     html.enabled true
     html.destination file("${buildDir}/reports/jacocoHtml")
   }
+}
+
+coveralls {
+  jacocoReportPath 'build/reports/jacoco/test/jacocoTestReport.xml'
+}
+
+tasks.coveralls {
+  dependsOn 'check'
+}
+
+test {
+  // Exclude integration tests
+  exclude '**/*IntegrationTest*'
 }
 
 test.finalizedBy jacocoTestReport
@@ -79,10 +107,11 @@ wsdl2javaExt {
   deleteGeneratedSourcesOnClean = true
 }
 wsdl2java {
-  generatedWsdlDir = file("src/main/generated/")  // target directory for generated source coude
+  generatedWsdlDir = file("src/main/generated/")  // target directory for generated source code
   wsdlDir = file("src/wsdl/") // define to support incremental build
   wsdlsToGenerate = [
-    ['-xjc', '-b', 'src/wsdl/bindings.xml', 'http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl']
+    ['-xjc', '-b', "$projectDir/src/wsdl/bindings.xml", 'http://ec.europa.eu/taxation_customs/vies/checkVatService' +
+      '.wsdl']
   ]
 }
 sourceSets.main.java.srcDirs.addAll(file("src/main/generated/"))
