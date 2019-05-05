@@ -82,6 +82,12 @@ jacocoTestReport {
     html.enabled true
     html.destination file("${buildDir}/reports/jacocoHtml")
   }
+  afterEvaluate {
+    classDirectories = files(classDirectories.files.collect {
+      fileTree(dir: it,
+        excludes: ['**/eu/europa/ec/taxud/vies/services/checkvat/**'])
+    })
+  }
 }
 
 coveralls {
@@ -95,6 +101,10 @@ tasks.coveralls {
 test {
   // Exclude integration tests
   exclude '**/*IntegrationTest*'
+  jacoco {
+    enabled = true
+    includes = [ '**/vies/**' ]
+  }
 }
 
 test.finalizedBy jacocoTestReport
